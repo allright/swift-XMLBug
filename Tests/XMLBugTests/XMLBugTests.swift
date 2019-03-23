@@ -2,15 +2,16 @@ import XCTest
 import class Foundation.Bundle
 
 
-final class XMLBugTests: XCTestCase, XMLParserDelegate {
-    func testExample() throws {
+private let originalElementName = "part_1:part_2"
 
-        let xmlString = "<element_name_part_1:element_name_part_2>"
+
+final class XMLBugTests: XCTestCase, XMLParserDelegate {
+    func testElementName() throws {
+        let xmlString = "<\(originalElementName)>"
         let xmlData = xmlString.data(using: .utf8)!
         let xmlParser = XMLParser(data: xmlData)
         xmlParser.delegate = self
-        xmlParser.parse()
-
+        XCTAssertTrue(xmlParser.parse())
     }
 
     public func parser(_ parser: XMLParser,
@@ -18,11 +19,11 @@ final class XMLBugTests: XCTestCase, XMLParserDelegate {
                        namespaceURI: String?,
                        qualifiedName qName: String?,
                        attributes attributeDict: [String: String] = [:]) {
-        print("didStartElement = \(elementName)")
+        XCTAssertEqual(originalElementName, elementName)
     }
 
 
     static var allTests = [
-        ("testExample", testExample),
+        ("testExample", testElementName),
     ]
 }
